@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "I6eFjK6vMlB1mxjcN+xWYblV3Cw669oKhJt/IzCoyqZQ3RLzgYkbE6WEDT5SToxUy6autjIAW813zXLWNpbooA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ryanjayson\\source\\repos\\LeadHornet.Test.Program\\LeadHornet.Test.Program\\LeadHornet.Test.Program.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ryanjayson\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512"
+  ],
+  "logs": []
+}

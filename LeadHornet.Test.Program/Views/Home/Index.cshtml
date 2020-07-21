@@ -1,0 +1,141 @@
+﻿@{
+    ViewData["Title"] = "Weather App";
+}
+
+<div class="hero-section">
+    <div class="container">
+
+        <div class="banner-hero">
+
+            <div class="banner-form">
+
+                <h1>Lead Hornet Programming test</h1>
+                <span class="sub-header-p">
+                    This simple Weather App will get the current IP address and search for it's locaion and weather.
+                    It has location input where you can search for location and show it's weather. 
+                </span>
+
+                <div class="form-group">
+                    <input id="location-input" type="text" class="form-control" placeholder="Enter location">
+                    <small id="emailHelp" class="form-text">Location input has feature of location searching.</small>
+                </div>
+
+                <button id="search-location" type="button" class="btn btn-primary">Search Location</button>
+
+            </div>
+
+            <div class="banner-result">
+                <div class="result-location">
+                    <span class="data-location-label">My location</span>
+                    <span class="data-location">{Location}</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script id="weather-result" type="text/x-jquery-tmpl">
+    <div class="result-weather searched-result">
+
+        <div class="result-weather-location">
+            <span class="data-weather-loc-city" data-content="city">${city}</span>
+            <span class="data-weather-loc-country" data-content="country">${country}</span>
+        </div>
+
+        <div class="result-weather-data">
+            <span class="data-weather-icon"><img src="${icon}" /></span>
+            <span class="data-weather-desc" data-content="desc">${description}</span>
+        </div>
+
+        <div class="result-weather-temp">
+            <span class="data-weather-temp">TEMP<br> <i data-content="temp">${temperature}</i></span>
+        </div>
+    </div>
+
+</script>
+
+
+@section Scripts{
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+
+    <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
+
+    <script>
+
+        var ps;
+        var rCity, rCountry;
+
+        //INIT AUTOCOMPLETE
+        window.onload = function () {
+            ps = placeSearch({
+                key: 'lYrP4vF3Uk5zgTiGGuEzQGwGIVDGuy24',
+                container: document.querySelector('#location-input'),
+                collection: [
+                    'airport', 'address', 'adminArea', 'poi'
+                ]
+            });
+
+            ps.on('change', (e) => {
+                rCity = e.result.city
+                rCountry = e.result.countryCode
+            });
+        }
+
+        //GET USER LOCATION BASED ON IP LOAD, AND DISPLAY WEATHER
+        function displayUserInfo(json) {
+
+            $.getJSON('https://ipapi.co/' + json.ip + '/json', function (data) {
+                $('.data-location').text(data.city + ', ' + data.country_name);
+
+                searchWeatherDetail(data);
+            });
+
+        }
+
+        //GET WEATHER BASED ON LOCATION
+        function searchWeatherDetail(location) {
+            var appId = "8dad832ddfefdbce0c47db083fc43bca";
+            var locationData = location.city + ', ' + location.country
+
+            $.getJSON('https://api.openweathermap.org/data/2.5/weather?q=' + locationData + '&appid=' + appId + '&units=metric', function (res) {
+                var weatherResult = [
+                    {
+                        city: res.name,
+                        country: res.sys.country,
+                        icon: 'http://openweathermap.org/img/w/' + res.weather[0].icon + '.png',
+                        description: res.weather[0].description,
+                        temperature: res.main.temp + '°c'
+                    }
+                ];
+
+                // Use the template
+                $("#weather-result").tmpl(weatherResult).appendTo(".banner-result");
+            });
+
+        }
+
+        //SEARCH BUTTON EVENT
+        $("#search-location").click(function () {
+            var location = {
+                city: rCity,
+                country: rCountry
+            };
+
+            //CHECK WEATHER
+            searchWeatherDetail(location)
+
+            $(this).val('');
+        });
+
+    </script>
+
+    <script src="https://api.ipify.org?format=jsonp&callback=displayUserInfo"></script>
+
+}
